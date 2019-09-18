@@ -11,6 +11,7 @@ use Drupal\ui_patterns\Form\PatternDisplayFormTrait;
 use Drupal\ui_patterns\UiPatternsSourceManager;
 use Drupal\ui_patterns\UiPatternsManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Plugin implementation of the 'pattern' formatter.
@@ -63,11 +64,18 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   protected $patternsManager;
 
   /**
-   * UI Patterns manager.
+   * UI Patterns source manager.
    *
    * @var \Drupal\ui_patterns\UiPatternsSourceManager
    */
   protected $sourceManager;
+
+  /**
+   * A module manager object.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
 
   /**
    * Constructs a Drupal\Component\Plugin\PluginBase object.
@@ -77,10 +85,11 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
    * @param \Drupal\ui_patterns\UiPatternsSourceManager $source_manager
    *   UI Patterns source manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, UiPatternsManager $patterns_manager, UiPatternsSourceManager $source_manager) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, UiPatternsManager $patterns_manager, UiPatternsSourceManager $source_manager, ModuleHandlerInterface $module_handler) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->patternsManager = $patterns_manager;
     $this->sourceManager = $source_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -96,7 +105,8 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
       $configuration['view_mode'],
       $configuration['third_party_settings'],
       $container->get('plugin.manager.ui_patterns'),
-      $container->get('plugin.manager.ui_patterns_source')
+      $container->get('plugin.manager.ui_patterns_source'),
+      $container->get('module_handler')
     );
   }
 
@@ -115,9 +125,10 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
+    $field_storage_definition = $this->fieldDefinition->getFieldStorageDefinition();
     $context = [
-      'storageDefinition' => $this->fieldDefinition->getFieldStorageDefinition(),
-      'limit' => $this->fieldDefinition->getFieldStorageDefinition()->getPropertyNames(),
+      'storageDefinition' => $field_storage_definition,
+      'limit' => $field_storage_definition->getPropertyNames(),
     ];
     $this->buildPatternDisplayForm($form, 'field_properties', $context, $this->getSettings());
     return $form;
