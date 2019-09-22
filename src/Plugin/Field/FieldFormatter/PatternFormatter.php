@@ -116,6 +116,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   public static function defaultSettings() {
     return [
       'pattern' => '',
+      'variants' => '',
       'pattern_mapping' => [],
     ] + parent::defaultSettings();
   }
@@ -130,7 +131,10 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
       'storageDefinition' => $field_storage_definition,
       'limit' => $field_storage_definition->getPropertyNames(),
     ];
-    $this->buildPatternDisplayForm($form, 'field_properties', $context, $this->getSettings());
+    $configuration = $this->getSettings();
+    $pattern = $this->getSetting('pattern');
+    $configuration['pattern_variant'] = $this->getSetting('variants')[$pattern];
+    $this->buildPatternDisplayForm($form, 'field_properties', $context, $configuration);
     return $form;
   }
 
@@ -138,13 +142,23 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
    * {@inheritdoc}
    */
   public function settingsSummary() {
+    $summary = [];
+    $pattern = $this->getSetting('pattern');
+    $pattern = $this->patternsManager->getDefinition($pattern);
+
     $label = $this->t('None');
     if (!empty($this->getSetting('pattern'))) {
-      $label = $this->patternsManager->getDefinition($this->getSetting('pattern'))->getLabel();
+      $label = $pattern->getLabel();
     }
-    return [
-      $this->t('Pattern: @pattern', ['@pattern' => $label]),
-    ];
+    $summary[] = $this->t('Pattern: @pattern', ['@pattern' => $label]);
+
+    if (!empty($this->getSetting('variants'))) {
+      $variant = $this->getSetting('variants')[$pattern->id()];
+      $variant = $pattern->getVariant($variant)->getLabel();
+      $summary[] = $this->t('Variant: @variant', ['@variant' => $variant]);
+    }
+
+    return $summary;
   }
 
   /**
@@ -153,19 +167,16 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
     foreach ($items as $delta => $item) {
+      $pattern = $this->getSetting('pattern');
 
       // Set pattern fields.
       $fields = [];
       $mapping = $this->getSetting('pattern_mapping');
-      // TODO: Get rid of this weird [$pattern]['settings'] intermediate layer.
-      $pattern = $this->getSetting('pattern');
       $mapping = $mapping[$pattern]['settings'];
       foreach ($mapping as $source => $field) {
         // Get rid of the source tag.
         $source = explode(":", $source)[1];
-        $fields[$field['destination']][] = [
-          "#markup" => (string) $item->get($source)->getValue(),
-        ];
+        $fields[$field['destination']] = (string) $item->get($source)->getValue();
       }
 
       // Set pattern render array.
@@ -175,6 +186,12 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
         '#fields' => $fields,
       ];
 
+      // Set the variant.
+      if (!empty($this->getSetting('variants'))) {
+        $variant = $this->getSetting('variants')[$pattern];
+        $elements[$delta]['#variant'] = $variant;
+      }
+
       // Set pattern context.
       // TODO: Add context.
     }
@@ -183,10 +200,8 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
 
   /**
    * {@inheritdoc}
-   * From \Drupal\ui_patterns\Form\PatternDisplayFormTrait.
    */
   protected function getDefaultValue(array $configuration, $field_name, $value) {
-    // TODO: Get rid of this weird [$pattern]['settings'] intermediate layer.
     $pattern = $configuration['pattern'];
     if (isset($configuration['pattern_mapping'][$pattern]['settings'][$field_name][$value])) {
       return $configuration['pattern_mapping'][$pattern]['settings'][$field_name][$value];
