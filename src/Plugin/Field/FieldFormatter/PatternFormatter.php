@@ -118,6 +118,8 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
       'pattern' => '',
       'variants' => '',
       'pattern_mapping' => [],
+      // Used by ui_patterns_settings.
+      'pattern_settings' => [],
     ] + parent::defaultSettings();
   }
 
