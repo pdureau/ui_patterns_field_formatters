@@ -133,6 +133,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
       'storageDefinition' => $field_storage_definition,
       'limit' => $field_storage_definition->getPropertyNames(),
     ];
+    // Some modifications to make 'variant' default value working.
     $configuration = $this->getSettings();
     $pattern = $this->getSetting('pattern');
     $configuration['pattern_variant'] = $this->getSetting('variants')[$pattern];
@@ -204,6 +205,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
    * {@inheritdoc}
    */
   protected function getDefaultValue(array $configuration, $field_name, $value) {
+    // Some modifications to make 'destination' default value working.
     $pattern = $configuration['pattern'];
     if (isset($configuration['pattern_mapping'][$pattern]['settings'][$field_name][$value])) {
       return $configuration['pattern_mapping'][$pattern]['settings'][$field_name][$value];
