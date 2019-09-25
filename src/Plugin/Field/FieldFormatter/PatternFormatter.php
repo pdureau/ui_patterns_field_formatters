@@ -177,6 +177,9 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
       $mapping = $this->getSetting('pattern_mapping');
       $mapping = $mapping[$pattern]['settings'];
       foreach ($mapping as $source => $field) {
+        if ($field['destination'] === '_hidden') {
+          continue;
+        }
         // Get rid of the source tag.
         $source = explode(":", $source)[1];
         $fields[$field['destination']] = (string) $item->get($source)->getValue();
