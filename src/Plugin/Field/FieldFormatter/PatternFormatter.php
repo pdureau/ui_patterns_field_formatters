@@ -147,18 +147,21 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   public function settingsSummary() {
     $summary = [];
     $pattern = $this->getSetting('pattern');
-    $pattern = $this->patternsManager->getDefinition($pattern);
 
-    $label = $this->t('None');
-    if (!empty($this->getSetting('pattern'))) {
-      $label = $pattern->getLabel();
-    }
-    $summary[] = $this->t('Pattern: @pattern', ['@pattern' => $label]);
+    if (!empty($pattern)) {
+      $pattern = $this->patternsManager->getDefinition($pattern);
 
-    if (!empty($this->getSetting('variants'))) {
-      $variant = $this->getSetting('variants')[$pattern->id()];
-      $variant = $pattern->getVariant($variant)->getLabel();
-      $summary[] = $this->t('Variant: @variant', ['@variant' => $variant]);
+      $label = $this->t('None');
+      if (!empty($this->getSetting('pattern'))) {
+        $label = $pattern->getLabel();
+      }
+      $summary[] = $this->t('Pattern: @pattern', ['@pattern' => $label]);
+
+      if (!empty($this->getSetting('variants'))) {
+        $variant = $this->getSetting('variants')[$pattern->id()];
+        $variant = $pattern->getVariant($variant)->getLabel();
+        $summary[] = $this->t('Variant: @variant', ['@variant' => $variant]);
+      }
     }
 
     return $summary;
