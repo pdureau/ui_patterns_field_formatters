@@ -201,6 +201,13 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
         $elements[$delta]['#variant'] = $variant;
       }
 
+      // Set the settings.
+      $settings = $this->getSetting('pattern_settings');
+      $pattern_settings = !empty($settings) && isset($settings[$pattern]) ? $settings[$pattern] : NULL;
+      if (isset($pattern_settings)) {
+        $elements[$delta]['#settings'] = $pattern_settings;
+      }
+
       // Set pattern context.
       // TODO: Add context.
     }
