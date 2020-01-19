@@ -135,7 +135,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
     ];
     // Some modifications to make 'variant' default value working.
     $configuration = $this->getSettings();
-
+    $pattern = $this->getSetting('pattern');
     $variants = $this->getSetting('variants');
     $pattern_variant = !empty($variants) && isset($variants[$pattern]) ? $variants[$pattern] : NULL;
     if (isset($pattern_variant)) {
