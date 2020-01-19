@@ -135,8 +135,13 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
     ];
     // Some modifications to make 'variant' default value working.
     $configuration = $this->getSettings();
-    $pattern = $this->getSetting('pattern');
-    $configuration['pattern_variant'] = $this->getSetting('variants')[$pattern];
+
+    $variants = $this->getSetting('variants');
+    $pattern_variant = !empty($variants) && isset($variants[$pattern]) ? $variants[$pattern] : NULL;
+    if (isset($pattern_variant)) {
+      $configuration['pattern_variant'] = $pattern_variant;
+    }
+
     $this->buildPatternDisplayForm($form, 'field_properties', $context, $configuration);
     return $form;
   }
@@ -157,7 +162,10 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
       }
       $summary[] = $this->t('Pattern: @pattern', ['@pattern' => $label]);
 
-      if (!empty($this->getSetting('variants'))) {
+      $variants = $this->getSetting('variants');
+      $pattern_variant = !empty($variants) && isset($variants[$pattern->id()]) ? $variants[$pattern->id()] : NULL;
+
+      if (isset($pattern_variant)) {
         $variant = $this->getSetting('variants')[$pattern->id()];
         $variant = $pattern->getVariant($variant)->getLabel();
         $summary[] = $this->t('Variant: @variant', ['@variant' => $variant]);
@@ -196,9 +204,10 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
       ];
 
       // Set the variant.
-      if (!empty($this->getSetting('variants'))) {
-        $variant = $this->getSetting('variants')[$pattern];
-        $elements[$delta]['#variant'] = $variant;
+      $variants = $this->getSetting('variants');
+      $pattern_variant = !empty($variants) && isset($variants[$pattern]) ? $variants[$pattern] : NULL;
+      if (isset($pattern_variant)) {
+        $elements[$delta]['#variant'] = $pattern_variant;
       }
 
       // Set pattern context.
