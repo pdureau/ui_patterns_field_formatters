@@ -7,6 +7,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\ui_patterns\Element\PatternContext;
 use Drupal\ui_patterns\Form\PatternDisplayFormTrait;
 use Drupal\ui_patterns\UiPatternsSourceManager;
 use Drupal\ui_patterns\UiPatternsManager;
@@ -218,7 +219,12 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
       }
 
       // Set pattern context.
-      // TODO: Add context.
+      $entity = $items->getEntity();
+      $elements[$delta]['#context'] = [
+        'type' => 'field_formatter',
+        'entity' => $entity,
+      ];
+
     }
     return $elements;
   }
