@@ -87,8 +87,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
    * @param \Drupal\ui_patterns\UiPatternsSourceManager $source_manager
    *   UI Patterns source manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, UiPatternsManager $patterns_manager, UiPatternsSourceManager $source_manager, ModuleHandlerInterface $module_handler)
-  {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, UiPatternsManager $patterns_manager, UiPatternsSourceManager $source_manager, ModuleHandlerInterface $module_handler) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->patternsManager = $patterns_manager;
     $this->sourceManager = $source_manager;
@@ -98,8 +97,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition)
-  {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $plugin_id,
       $plugin_definition,
@@ -117,8 +115,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings()
-  {
+  public static function defaultSettings() {
     return [
       'pattern' => '',
       'variants' => '',
@@ -131,8 +128,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state)
-  {
+  public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
     $field_storage_definition = $this->fieldDefinition->getFieldStorageDefinition();
     $context = [
@@ -154,8 +150,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary()
-  {
+  public function settingsSummary() {
     $summary = [];
     $pattern = $this->getSetting('pattern');
 
@@ -182,8 +177,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode)
-  {
+  public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
     foreach ($items as $delta => $item) {
       $pattern = $this->getSetting('pattern');
@@ -234,8 +228,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  protected function getDefaultValue(array $configuration, $field_name, $value)
-  {
+  protected function getDefaultValue(array $configuration, $field_name, $value) {
     // Some modifications to make 'destination' default value working.
     $pattern = $configuration['pattern'];
     if (isset($configuration['pattern_mapping'][$pattern]['settings'][$field_name][$value])) {
@@ -251,8 +244,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
    * @param [string] $pattern
    * @return string|null
    */
-  protected function getCurrentVariant($pattern)
-  {
+  protected function getCurrentVariant($pattern) {
     $variants = $this->getSetting('variants');
     return !empty($variants) && isset($variants[$pattern]) ? $variants[$pattern] : NULL;
   }
