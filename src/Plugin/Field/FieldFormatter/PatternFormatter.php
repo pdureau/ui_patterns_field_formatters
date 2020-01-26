@@ -53,8 +53,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  *   },
  * )
  */
-class PatternFormatter extends FormatterBase implements ContainerFactoryPluginInterface
-{
+class PatternFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
   use PatternDisplayFormTrait;
 
