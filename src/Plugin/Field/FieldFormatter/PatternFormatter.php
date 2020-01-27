@@ -137,8 +137,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
     // Some modifications to make 'variant' default value working.
     $configuration = $this->getSettings();
     $pattern = $this->getSetting('pattern');
-    $variants = $this->getSetting('variants');
-    $pattern_variant = !empty($variants) && isset($variants[$pattern]) ? $variants[$pattern] : NULL;
+    $pattern_variant = $this->getCurrentVariant($pattern);
     if (isset($pattern_variant)) {
       $configuration['pattern_variant'] = $pattern_variant;
     }
@@ -155,20 +154,18 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
     $pattern = $this->getSetting('pattern');
 
     if (!empty($pattern)) {
-      $pattern = $this->patternsManager->getDefinition($pattern);
+      $pattern_definition = $this->patternsManager->getDefinition($pattern);
 
       $label = $this->t('None');
       if (!empty($this->getSetting('pattern'))) {
-        $label = $pattern->getLabel();
+        $label = $pattern_definition->getLabel();
       }
       $summary[] = $this->t('Pattern: @pattern', ['@pattern' => $label]);
 
-      $variants = $this->getSetting('variants');
-      $pattern_variant = !empty($variants) && isset($variants[$pattern->id()]) ? $variants[$pattern->id()] : NULL;
-
+      $pattern_variant = $this->getCurrentVariant($pattern);
       if (isset($pattern_variant)) {
-        $variant = $this->getSetting('variants')[$pattern->id()];
-        $variant = $pattern->getVariant($variant)->getLabel();
+        $variant = $this->getSetting('variants')[$pattern_definition->id()];
+        $variant = $pattern_definition->getVariant($variant)->getLabel();
         $summary[] = $this->t('Variant: @variant', ['@variant' => $variant]);
       }
     }
@@ -205,8 +202,7 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
       ];
 
       // Set the variant.
-      $variants = $this->getSetting('variants');
-      $pattern_variant = !empty($variants) && isset($variants[$pattern]) ? $variants[$pattern] : NULL;
+      $pattern_variant = $this->getCurrentVariant($pattern);
       if (isset($pattern_variant)) {
         $elements[$delta]['#variant'] = $pattern_variant;
       }
@@ -224,7 +220,6 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
         'type' => 'field_formatter',
         'entity' => $entity,
       ];
-
     }
     return $elements;
   }
@@ -241,4 +236,15 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
     return NULL;
   }
 
+  /**
+   * Checks if a given pattern has a corresponding value on the variants
+   * array
+   *
+   * @param [string] $pattern
+   * @return string|null
+   */
+  protected function getCurrentVariant($pattern) {
+    $variants = $this->getSetting('variants');
+    return !empty($variants) && isset($variants[$pattern]) ? $variants[$pattern] : NULL;
+  }
 }
