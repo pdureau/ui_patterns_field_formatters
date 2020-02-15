@@ -2,6 +2,7 @@ name: UI Patterns Field Formatters
 type: module
 description: Use patterns as field formatters templates.
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: User interface
 dependencies:
   - ui_patterns:ui_patterns
