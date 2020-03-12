@@ -7,7 +7,6 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\ui_patterns\Element\PatternContext;
 use Drupal\ui_patterns\Form\PatternDisplayFormTrait;
 use Drupal\ui_patterns\UiPatternsSourceManager;
 use Drupal\ui_patterns\UiPatternsManager;
@@ -81,10 +80,26 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * Constructs a Drupal\Component\Plugin\PluginBase object.
    *
+   * @param string $plugin_id
+   *   The plugin_id for the formatter.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The definition of the field to which the formatter is associated.
+   * @param array $settings
+   *   The formatter settings.
+   * @param string $label
+   *   The formatter label display setting.
+   * @param string $view_mode
+   *   The view mode.
+   * @param array $third_party_settings
+   *   Any third party settings.
    * @param \Drupal\ui_patterns\UiPatternsManager $patterns_manager
    *   UI Patterns manager.
    * @param \Drupal\ui_patterns\UiPatternsSourceManager $source_manager
    *   UI Patterns source manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler.
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, UiPatternsManager $patterns_manager, UiPatternsSourceManager $source_manager, ModuleHandlerInterface $module_handler) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
@@ -237,14 +252,17 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
   }
 
   /**
-   * Checks if a given pattern has a corresponding value on the variants
-   * array
+   * Checks if a given pattern has a corresponding value on the variants array.
    *
-   * @param [string] $pattern
+   * @param string $pattern
+   *   Pattern ID.
+   *
    * @return string|null
+   *   Variant ID.
    */
   protected function getCurrentVariant($pattern) {
     $variants = $this->getSetting('variants');
     return !empty($variants) && isset($variants[$pattern]) ? $variants[$pattern] : NULL;
   }
+
 }
