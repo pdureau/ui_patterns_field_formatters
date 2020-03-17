@@ -1,10 +1,8 @@
-# UI Patterns Field Formatters
-
 INTRODUCTION
 ------------
 
-The UI Patterns Field Formatters module exposes components from UI Patterns to
-the [Field Formatter API](https://api.drupal.org/api/drupal/core%21modules%21field%21field.api.php/group/field_formatter/8.5.x).
+The UI Patterns Field Formatters module exposes components from UI Patterns to 
+the Field Formatter API.
 
  * For a full description of the module, visit the project page:
    https://www.drupal.org/project/ui_patterns_field_formatters
