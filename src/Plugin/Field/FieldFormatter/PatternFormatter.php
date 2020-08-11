@@ -12,6 +12,8 @@ use Drupal\ui_patterns\UiPatternsSourceManager;
 use Drupal\ui_patterns\UiPatternsManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\TypedData\Plugin\DataType\Uri;
+use Drupal\Core\Url;
 
 /**
  * Plugin implementation of the 'pattern' formatter.
@@ -206,7 +208,17 @@ class PatternFormatter extends FormatterBase implements ContainerFactoryPluginIn
         }
         // Get rid of the source tag.
         $source = explode(":", $source)[1];
-        $fields[$field['destination']] = (string) $item->get($source)->getValue();
+        $value = (string) $item->get($source)->getValue();
+        // Preprocess Uri datatype instead of pushing the raw value.
+        if ($item->get($source) instanceof Uri) {
+          $options = [];
+          // Most of the time, Uri datatype is met in a "link" field type.
+          if ($item->getPluginId() === "field_item:link") {
+            $options = $item->get('options')->toArray();
+          }
+          $value = Url::fromUri($value, $options)->toString();
+        }
+        $fields[$field['destination']] = $value;
       }
 
       // Set pattern render array.
